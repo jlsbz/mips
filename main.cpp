@@ -5,6 +5,7 @@
 #include <cmath>
 #include <functional>
 #include <string.h>
+#include <sstream>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ struct xxx
     int num[3] = {0};
 
 
-    &operator=(const xxx &other)
+    xxx &operator=(const xxx &other)
     {
         type = other.type;
         isnum = other.isnum;
@@ -267,7 +268,7 @@ int trans_reg(string &s)
 }
 
 
-void binary_mul(__int64  a, __int64  b)
+void binary_mul(long long  a, long long  b)
 {
     bool flaga=(a<0);
     if(a<0)
@@ -275,8 +276,8 @@ void binary_mul(__int64  a, __int64  b)
     bool flagb=(b<0);
     if(b<0)
         b=-b;
-    __int64  hi = 0;
-    __int64  lo = 0;
+    long long   hi = 0;
+    long long  lo = 0;
     map<int,int> bits;
     for(int i=0; i<40; i++)
     {
@@ -381,9 +382,9 @@ bool syscall()
 
 
 
-int main(int argc, int **argv)
+int main(int argc, char *argv[])
 {
-    fstream fin("a.txt");
+    ifstream fin(argv[1]);
     string now;
     while(getline(fin,now))
     {
