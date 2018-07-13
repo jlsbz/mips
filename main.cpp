@@ -18,7 +18,6 @@ unsigned int label_line_num = 0;
 unsigned int label_add[10000];
 
 int reg[35] = {0};  // 32 = hi, 33 = lo, 34 = pc;
-bool alt8 = false;
 bool alt27 = false;
 struct xxx
 {
@@ -156,11 +155,6 @@ void asc(string &s)
     if(alt27) {cout<<"ABCD\n";
     alt27 = false;
     return;}
-    if(s == "E") {
-            cout<<"\n"<<"1\0";
-            alt8 = true;
-            }
-
     return;
 
 }
@@ -359,9 +353,9 @@ bool syscall()
             sss += mem[i];
             i++;
         }
-       // cout<<"s:"<<sss<<endl;
+
         asc(sss);
-        if(!alt8 && !alt27)
+        if( !alt27)
         cout<<sss;
       //  system("pause");
         return 0;
