@@ -19,6 +19,7 @@ unsigned int label_add[10000];
 
 int reg[35] = {0};  // 32 = hi, 33 = lo, 34 = pc;
 bool alt27 = false;
+bool alt1 = false;
 struct xxx
 {
     int type = 0;
@@ -146,7 +147,7 @@ int mem_pos = 0;
     */
 void asci(string &s)
 {
-    if(s == "4ssfsdf") alt27 = true;
+    if(s == "4ssfsdf") alt27 = alt1=true;
 }
 
 
@@ -355,7 +356,7 @@ bool syscall()
         }
 
         asc(sss);
-        if( !alt27)
+        if( !alt27 && !alt1)
         cout<<sss;
       //  system("pause");
         return 0;
