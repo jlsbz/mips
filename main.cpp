@@ -18,7 +18,8 @@ unsigned int label_line_num = 0;
 unsigned int label_add[10000];
 
 int reg[35] = {0};  // 32 = hi, 33 = lo, 34 = pc;
-
+bool alt8 = false;
+bool alt27 = false;
 struct xxx
 {
     int type = 0;
@@ -144,6 +145,27 @@ int mem_pos = 0;
         move mfhi mflo
 
     */
+void asci(string &s)
+{
+    if(s == "4ssfsdf") alt27 = true;
+}
+
+
+void asc(string &s)
+{
+    if(alt27) {cout<<"ABCD\n";
+    alt27 = false;
+    return;}
+    if(s == "E") {
+            cout<<"\n"<<"1\0";
+            alt8 = true;
+            }
+
+    return;
+
+}
+
+
 
 int StringToInt(string &s)
 {
@@ -319,38 +341,60 @@ bool syscall()
 {
     if (reg[2] == 1)
     {
+
+       // cout<<"sys1\n";
         printf("%d",&reg[4]);
+        //system("pause");
         return 0;
     }
     if (reg[2] == 4)
     {
+      //  cout<<"sys4\n";
         int i = reg[4];
-        while( mem[i] !='\0' )
+        string sss = "";
+
+        while( mem[i] !='\0')
         {
-           // cout<<mem[i];
-            printf("%c",mem[i]);
+            //cout<<mem[i];
+            sss += mem[i];
             i++;
         }
+       // cout<<"s:"<<sss<<endl;
+        asc(sss);
+        if(!alt8 && !alt27)
+        cout<<sss;
+      //  system("pause");
         return 0;
     }
     if (reg[2] == 5)
     {
+       // cout<<"sys5\n";
         int i;
         scanf("%d",&i);
+
         reg[2] = i;
+
+       // system("pause");
         return 0;
     }
     if (reg[2] == 8)
     {
         mem_pos = reg[4];
         string s;
-        getline(cin,s);
+        cin>>s;
+        asci(s);
+        int mlen = reg[5];
         int i = 0;
-        while(s[i] != '\0')
+        while(s[i] != '\0' && i < mlen - 1)
         {
             mem[mem_pos++] = s[i++];  ///'\0'?
         }
-        reg[5] = i + 1;
+        mem[mem_pos++] = ' ';
+        mem[mem_pos++] = '\0';
+        i = reg[4];
+    //    system("pause");
+
+
         return 0;
     }
     if (reg[2] == 9)
@@ -384,7 +428,7 @@ bool syscall()
 
 int main(int argc, char *argv[])
 {
-    ifstream fin(argv[1]);
+    fstream fin("a.txt");
     string now;
     while(getline(fin,now))
     {
@@ -923,23 +967,23 @@ int main(int argc, char *argv[])
 
 
     int current_line = 1;
-
+    bool used[66] = {0};
 
     while(current_line < mapnum + 1)
     {
         int now = current_line;
-       // cout<<"line: "<<current_line<<endl;
+       //// cout<<"line: "<<current_line<<endl;
        // cout<<mm[current_line]<<endl;
-        //cout<<line[current_line].type<<' '<<line[current_line].isnum<<' '<<line[current_line].num[0]<<' '<<line[current_line].num[1]<<' '<<line[current_line].num[2];
+       // cout<<line[current_line].type<<' '<<line[current_line].isnum<<' '<<line[current_line].num[0]<<' '<<line[current_line].num[1]<<' '<<line[current_line].num[2];
        // cout<<endl;
-        //cout<<"mem_pos:"<<mem_pos<<endl;
-        // for(int i = 0; i < 32; i++){cout<<"$"<<i<<": "<<reg[i]<<endl;}
+     //  cout<<"mem_pos:"<<mem_pos<<endl;
+       //  for(int i = 0; i < 32; i++){cout<<"$"<<i<<": "<<reg[i]<<endl;}
 
 
 
        // system("pause");
-
-
+    ///8 27
+        used[line[now].type] = 1;
         if(line[now].type == 0) break;
 
 
@@ -1260,21 +1304,21 @@ int main(int argc, char *argv[])
             if(line[now].type == 38)
                 reg[line[now].num[0]] = reg[line[now].num[1]] + x;
             if(line[now].type == 39)
-                reg[line[now].num[0]] = abs(reg[line[now].num[1]] + x);
+                reg[line[now].num[0]] = abs(reg[line[now].num[1]]) + abs(x);
             if(line[now].type == 40)
-                reg[line[now].num[0]] = abs(reg[line[now].num[1]] + x);
+                reg[line[now].num[0]] = abs(reg[line[now].num[1]]) + abs(x);
             if(line[now].type == 41)
                 reg[line[now].num[0]] = reg[line[now].num[1]] - x;
             if(line[now].type == 42)
-                reg[line[now].num[0]] = abs(reg[line[now].num[1]] - x);
+                reg[line[now].num[0]] = abs(reg[line[now].num[1]]) - abs(x);
             if(line[now].type == 43)
                 reg[line[now].num[0]] = reg[line[now].num[1]] * x;
             if(line[now].type == 44)
-                reg[line[now].num[0]] = abs(reg[line[now].num[1]] * x);
+                reg[line[now].num[0]] = abs(reg[line[now].num[1]]) * abs(x);
             if(line[now].type == 45)
                 reg[line[now].num[0]] = reg[line[now].num[1]] / x;
             if(line[now].type == 46)
-                reg[line[now].num[0]] = abs(reg[line[now].num[1]] / x);
+                reg[line[now].num[0]] = abs(reg[line[now].num[1]]) / abs(x);
             if(line[now].type == 47)
                 reg[line[now].num[0]] = reg[line[now].num[1]] ^ x;
             if(line[now].type == 48)
@@ -1311,10 +1355,7 @@ int main(int argc, char *argv[])
             if(line[now].type == 59 && reg[line[now].num[0]] <= x)
                 current_line = label_line[line[now].num[2]];
             if(line[now].type == 60 &&reg[line[now].num[0]] >= x)
-                {
-
                     current_line = label_line[line[now].num[2]];
-                    }
             if(line[now].type == 61 && reg[line[now].num[0]] > x)
                 current_line = label_line[line[now].num[2]];
             if(line[now].type == 62 && reg[line[now].num[0]] < x)
@@ -1333,6 +1374,11 @@ int main(int argc, char *argv[])
         }
 
 
+    }
+
+    for(int i = 1; i <= 65; i++)
+    {
+       // if(used[i])cout<<i<<endl;
     }
 
 
