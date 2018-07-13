@@ -428,7 +428,7 @@ bool syscall()
 
 int main(int argc, char *argv[])
 {
-    fstream fin("a.txt");
+    ifstream fin(argv[1]);
     string now;
     while(getline(fin,now))
     {
